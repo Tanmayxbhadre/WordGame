@@ -1,0 +1,70 @@
+export const colors = {
+  dark: {
+    bgPrimary: '#0B0D12',
+    bgSecondary: '#121620',
+    bgElevated: '#1A202E',
+    borderSubtle: '#262E40',
+    borderActive: '#4F7CFF',
+    textPrimary: '#F4F6FA',
+    textSecondary: '#9BA6BC',
+    textMuted: '#636E85',
+    accent: '#4F7CFF',
+    accentHover: '#668FFF',
+    success: '#22C55E',
+    warning: '#F59E0B',
+    danger: '#EF4444',
+    tileDefaultBg: '#161B26',
+    tileDefaultBorder: '#2A3347',
+    tileSelectedBg: '#1E2942',
+    tileSelectedBorder: '#4F7CFF',
+    tileChangedBg: '#182C25',
+    tileChangedBorder: '#22C55E',
+    tileTargetBg: '#1A2234',
+    tileTargetBorder: '#3B5998',
+  },
+  light: {
+    bgPrimary: '#F7F8FB',
+    bgSecondary: '#FFFFFF',
+    bgElevated: '#EEF1F7',
+    borderSubtle: '#DCE2EE',
+    borderActive: '#2F5BEA',
+    textPrimary: '#0F172A',
+    textSecondary: '#475569',
+    textMuted: '#94A3B8',
+    accent: '#2F5BEA',
+    accentHover: '#2348C7',
+    success: '#16A34A',
+    warning: '#D97706',
+    danger: '#DC2626',
+    tileDefaultBg: '#FFFFFF',
+    tileDefaultBorder: '#CBD5E1',
+    tileSelectedBg: '#EEF2FF',
+    tileSelectedBorder: '#2F5BEA',
+    tileChangedBg: '#ECFDF5',
+    tileChangedBorder: '#16A34A',
+    tileTargetBg: '#F1F5F9',
+    tileTargetBorder: '#94A3B8',
+  },
+} as const;
+
+export const spacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  '2xl': 48,
+} as const;
+
+export const radii = {
+  sm: 6,
+  md: 10,
+  lg: 14,
+  xl: 20,
+  full: 9999,
+} as const;
+
+export const typography = {
+  fontSans: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+  fontMono: '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+} as const;
