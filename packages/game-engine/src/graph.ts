@@ -170,3 +170,64 @@ export function generatePuzzle(options: PuzzleGenerationOptions = {}): Generated
     shortestPathLength: path ? path.length - 1 : 4,
   };
 }
+
+export function chooseComputerMove(params: {
+  currentWord: string;
+  targetWord: string;
+  usedWords: Iterable<string>;
+  botDifficulty?: 'easy' | 'medium' | 'hard';
+  rng?: () => number;
+}): string | null {
+  const current = params.currentWord.trim().toLowerCase();
+  const target = params.targetWord.trim().toLowerCase();
+  const botDifficulty = params.botDifficulty ?? 'medium';
+  const rng = params.rng ?? Math.random;
+
+  const used = new Set<string>();
+  for (const w of params.usedWords) {
+    used.add(w.trim().toLowerCase());
+  }
+  used.add(current);
+
+  const graph = buildWordGraph(current.length);
+  const neighbors = (graph.get(current) ?? []).filter((w) => !used.has(w));
+  if (neighbors.length === 0) return null;
+
+  // Always take winning move immediately
+  if (neighbors.includes(target)) {
+    return target;
+  }
+
+  const shouldUseOptimal =
+    botDifficulty === 'hard' || (botDifficulty === 'medium' && rng() < 0.6);
+
+  if (shouldUseOptimal) {
+    // BFS avoiding used words
+    const queue: string[] = [current];
+    const parent = new Map<string, string | null>([[current, null]]);
+    let head = 0;
+
+    while (head < queue.length) {
+      const cur = queue[head++];
+      const nexts = graph.get(cur) ?? [];
+      for (const next of nexts) {
+        if (used.has(next) && next !== target) continue;
+        if (!parent.has(next)) {
+          parent.set(next, cur);
+          if (next === target) {
+            let step = target;
+            while (parent.get(step) && parent.get(step) !== current) {
+              step = parent.get(step)!;
+            }
+            if (parent.get(step) === current) {
+              return step;
+            }
+          }
+          queue.push(next);
+        }
+      }
+    }
+  }
+
+  return neighbors[Math.floor(rng() * neighbors.length)];
+}
