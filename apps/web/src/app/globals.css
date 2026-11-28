@@ -1,62 +1,102 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #f7f8fb;
+  /* Light mode: Warm Sketchbook Paper */
+  --bg-primary: #fbf8f1;
   --bg-secondary: #ffffff;
-  --bg-elevated: #eef1f7;
-  --border-subtle: #dce2ee;
-  --border-active: #2f5bea;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  --accent: #2f5bea;
-  --accent-hover: #2348c7;
+  --bg-elevated: #f3ede0;
+  --border-subtle: #1e293b;
+  --border-muted: #cbd5e1;
+  --border-active: #ff6b4a;
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+  --accent: #ff6b4a;
+  --accent-hover: #f25736;
+  --accent-secondary: #3b82f6;
   --success: #16a34a;
-  --warning: #d97706;
-  --danger: #dc2626;
+  --warning: #eab308;
+  --danger: #ef4444;
   --tile-bg: #ffffff;
-  --tile-border: #cbd5e1;
+  --tile-border: #18181b;
+  --sketch-shadow: #18181b;
 }
 
 .dark {
-  --bg-primary: #0b0d12;
-  --bg-secondary: #121620;
-  --bg-elevated: #1a202e;
-  --border-subtle: #262e40;
-  --border-active: #4f7cff;
-  --text-primary: #f4f6fa;
-  --text-secondary: #9ba6bc;
-  --text-muted: #636e85;
-  --accent: #4f7cff;
-  --accent-hover: #668fff;
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --tile-bg: #161b26;
-  --tile-border: #2a3347;
+  /* Dark mode: Playful Chalkboard / Ink */
+  --bg-primary: #14161f;
+  --bg-secondary: #1d202b;
+  --bg-elevated: #262a38;
+  --border-subtle: #3d445c;
+  --border-muted: #2d3345;
+  --border-active: #ff7a59;
+  --text-primary: #faf7f0;
+  --text-secondary: #b6bccf;
+  --text-muted: #7c849c;
+  --accent: #ff7a59;
+  --accent-hover: #ff8f73;
+  --accent-secondary: #60a5fa;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --tile-bg: #232736;
+  --tile-border: #4e5673;
+  --sketch-shadow: #090a0f;
 }
 
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Plus Jakarta Sans", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+.sketch-card {
+  border: 2px solid var(--border-subtle);
+  box-shadow: 4px 4px 0px var(--sketch-shadow);
+}
+
+.sketch-btn {
+  border: 2px solid var(--border-subtle);
+  box-shadow: 3px 3px 0px var(--sketch-shadow);
+  transition: transform 100ms ease, box-shadow 100ms ease, background-color 150ms ease;
+}
+
+.sketch-btn:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--sketch-shadow);
+}
+
+.sketch-btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--sketch-shadow);
+}
+
+.sketch-tile {
+  border: 2px solid var(--tile-border);
+  box-shadow: 0px 4px 0px var(--sketch-shadow);
+  transition: transform 120ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 120ms ease;
+}
+
+.sketch-tile:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0px 1px 0px var(--sketch-shadow);
 }
 
 @keyframes tilePop {
   0% {
-    transform: scale(0.94);
+    transform: scale(0.9) rotate(-2deg);
     opacity: 0.7;
   }
   60% {
-    transform: scale(1.04);
+    transform: scale(1.06) rotate(1deg);
   }
   100% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
     opacity: 1;
   }
 }
 
 .animate-tile-pop {
-  animation: tilePop 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: tilePop 220ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
