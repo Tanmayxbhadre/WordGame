@@ -24,21 +24,21 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-[var(--border-subtle)] bg-[var(--bg-secondary)]/90 backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--accent)] text-sm font-bold text-white">
+    <header className="sticky top-0 z-30 border-b-2 border-[var(--border-subtle)] bg-[var(--bg-secondary)]">
+      <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-4">
+        <Link href="/" className="flex items-center gap-2.5 font-extrabold tracking-tight">
+          <span className="sketch-btn flex h-9 w-9 -rotate-3 items-center justify-center rounded-xl bg-[var(--accent)] text-base font-black text-white">
             W
           </span>
-          <span className="text-base text-[var(--text-primary)]">WordShift</span>
+          <span className="text-lg text-[var(--text-primary)]">WordShift</span>
         </Link>
 
-        <nav className="flex items-center gap-1.5 sm:gap-2">
+        <nav className="flex items-center gap-2">
           <button
             type="button"
             onClick={toggleTheme}
             aria-label="Toggle color theme"
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--border-subtle)] text-[var(--text-secondary)] transition hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]"
+            className="sketch-btn flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--bg-elevated)] text-[var(--text-primary)]"
           >
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
@@ -46,10 +46,10 @@ export function Navbar() {
           <Link
             href="/settings"
             aria-label="Settings"
-            className={`flex h-9 w-9 items-center justify-center rounded-lg border transition ${
+            className={`sketch-btn flex h-9 w-9 items-center justify-center rounded-xl ${
               pathname === '/settings'
-                ? 'border-[var(--accent)] bg-[var(--bg-elevated)] text-[var(--accent)]'
-                : 'border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]'
+                ? 'bg-[var(--accent)] text-white'
+                : 'bg-[var(--bg-elevated)] text-[var(--text-primary)]'
             }`}
           >
             <Settings className="h-4 w-4" />
@@ -58,10 +58,10 @@ export function Navbar() {
           {userEmail ? (
             <Link
               href="/profile"
-              className={`flex h-9 items-center gap-1.5 rounded-lg border px-3 text-sm font-medium transition ${
+              className={`sketch-btn flex h-9 items-center gap-1.5 rounded-xl px-3.5 text-sm font-bold ${
                 pathname === '/profile'
-                  ? 'border-[var(--accent)] bg-[var(--bg-elevated)] text-[var(--accent)]'
-                  : 'border-[var(--border-subtle)] text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]'
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'bg-[var(--bg-elevated)] text-[var(--text-primary)]'
               }`}
             >
               <User className="h-4 w-4" />
@@ -70,7 +70,7 @@ export function Navbar() {
           ) : (
             <Link
               href="/auth"
-              className="flex h-9 items-center rounded-lg bg-[var(--accent)] px-3.5 text-sm font-medium text-white transition hover:bg-[var(--accent-hover)]"
+              className="sketch-btn flex h-9 items-center rounded-xl bg-[var(--accent)] px-4 text-sm font-bold text-white"
             >
               Sign in
             </Link>
