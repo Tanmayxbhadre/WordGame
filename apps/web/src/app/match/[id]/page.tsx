@@ -9,6 +9,7 @@ import type {
 } from '@wordshift/shared-types';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import { apiFetch, makeIdempotencyKey } from '@/lib/api-client';
+import { ensurePlayerSession } from '@/lib/ensure-session';
 import { MatchLobby } from '@/components/match/MatchLobby';
 import { MatchGameplay } from '@/components/match/MatchGameplay';
 import { MatchResults } from '@/components/match/MatchResults';
@@ -49,15 +50,15 @@ export default function MatchPage() {
   }, [matchId, router]);
 
   useEffect(() => {
-    const supabase = createSupabaseBrowserClient();
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) {
-        router.push('/auth');
+    ensurePlayerSession().then((session) => {
+      if (!session.userId) {
+        setError(session.error ?? 'Could not initialize player session.');
+        setLoading(false);
         return;
       }
-      setUserId(data.user.id);
+      setUserId(session.userId);
     });
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     if (!userId) return;

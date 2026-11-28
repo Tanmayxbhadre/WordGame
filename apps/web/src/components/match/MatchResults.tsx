@@ -33,10 +33,10 @@ export function MatchResults({
   const secs = durationSeconds % 60;
 
   const reasonLabel: Record<string, string> = {
-    target_reached: 'Target word reached',
+    target_reached: 'Target word reached!',
     forfeit: 'Opponent forfeited',
     timeout_draw: 'Draw after 3 consecutive timeouts',
-    match_duration_draw: 'Draw — 5 minute match limit reached',
+    match_duration_draw: 'Draw — 5 minute limit reached',
     disconnect_forfeit: 'Opponent disconnected',
     cancelled: 'Match cancelled',
   };
@@ -47,64 +47,62 @@ export function MatchResults({
   ];
 
   return (
-    <div className="mx-auto max-w-xl space-y-6">
-      <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6 text-center sm:p-8">
+    <div className="mx-auto max-w-xl">
+      <div className="sketch-card rounded-3xl bg-[var(--bg-secondary)] p-6 text-center sm:p-8">
         <div
-          className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl ${
+          className={`sketch-btn mx-auto flex h-16 w-16 -rotate-3 items-center justify-center rounded-2xl text-white ${
             isDraw
-              ? 'bg-[var(--warning)]/15 text-[var(--warning)]'
+              ? 'bg-[var(--warning)]'
               : didIWin
-                ? 'bg-[var(--success)]/15 text-[var(--success)]'
-                : 'bg-[var(--danger)]/15 text-[var(--danger)]'
+                ? 'bg-[var(--success)]'
+                : 'bg-[var(--danger)]'
           }`}
         >
-          <Trophy className="h-7 w-7" />
+          <Trophy className="h-8 w-8" />
         </div>
 
-        <h1 className="mt-4 text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-          {isDraw ? 'Match Draw' : didIWin ? 'You Won!' : `${winner?.username ?? 'Opponent'} Won`}
+        <h1 className="mt-4 text-3xl font-black tracking-tight text-[var(--text-primary)]">
+          {isDraw ? 'Match Draw!' : didIWin ? 'You Won!' : `${winner?.username ?? 'Opponent'} Won`}
         </h1>
-        <p className="mt-1 text-sm text-[var(--text-secondary)]">
+        <p className="mt-1 text-sm font-medium text-[var(--text-secondary)]">
           {reasonLabel[match.result_reason ?? ''] ?? 'Match complete'}
         </p>
 
-        {/* Stats */}
-        <div className="mt-6 grid grid-cols-3 gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-primary)] p-4">
+        <div className="mt-6 grid grid-cols-3 gap-3 rounded-2xl border-2 border-[var(--border-subtle)] bg-[var(--bg-primary)] p-4">
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Moves</p>
-            <p className="mt-0.5 font-mono text-lg font-bold text-[var(--text-primary)]">
+            <p className="text-xs font-bold uppercase text-[var(--text-muted)]">Moves</p>
+            <p className="mt-0.5 font-mono text-xl font-black text-[var(--text-primary)]">
               {moves.filter((m) => !m.is_timeout_skip).length}
             </p>
           </div>
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Duration</p>
-            <p className="mt-0.5 font-mono text-lg font-bold text-[var(--text-primary)]">
+            <p className="text-xs font-bold uppercase text-[var(--text-muted)]">Time</p>
+            <p className="mt-0.5 font-mono text-xl font-black text-[var(--text-primary)]">
               {mins}:{secs.toString().padStart(2, '0')}
             </p>
           </div>
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Target</p>
-            <p className="mt-0.5 font-mono text-lg font-bold uppercase text-[var(--accent)]">
+            <p className="text-xs font-bold uppercase text-[var(--text-muted)]">Target</p>
+            <p className="mt-0.5 font-mono text-xl font-black uppercase text-[var(--accent)]">
               {match.target_word}
             </p>
           </div>
         </div>
 
-        {/* Complete Word Chain */}
         <div className="mt-6 text-left">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-            Complete Word Chain
+          <p className="text-xs font-extrabold uppercase tracking-wider text-[var(--text-muted)]">
+            Word Chain
           </p>
           <div className="mt-2.5 flex flex-wrap gap-2">
             {validChain.map((word, idx) => (
               <span
                 key={`${word}-${idx}`}
-                className={`rounded-lg border px-3 py-1.5 font-mono text-xs font-bold uppercase ${
+                className={`rounded-xl border-2 border-[var(--border-subtle)] px-3 py-1.5 font-mono text-xs font-black uppercase ${
                   word === match.target_word
-                    ? 'border-[var(--success)] bg-[var(--success)]/15 text-[var(--success)]'
+                    ? 'bg-[var(--success)] text-white'
                     : idx === 0
-                      ? 'border-[var(--accent)] bg-[var(--accent)]/15 text-[var(--accent)]'
-                      : 'border-[var(--border-subtle)] bg-[var(--bg-primary)] text-[var(--text-primary)]'
+                      ? 'bg-[var(--accent)] text-white'
+                      : 'bg-[var(--bg-primary)] text-[var(--text-primary)]'
                 }`}
               >
                 {word}
@@ -113,11 +111,10 @@ export function MatchResults({
           </div>
         </div>
 
-        {/* Actions */}
         <div className="mt-8 flex gap-3">
           <Link
             href="/"
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] py-3 text-sm font-medium text-[var(--text-primary)] transition hover:bg-[var(--bg-elevated)]"
+            className="sketch-btn flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[var(--bg-elevated)] py-3.5 text-sm font-extrabold text-[var(--text-primary)]"
           >
             <Home className="h-4 w-4" />
             Home
@@ -126,7 +123,7 @@ export function MatchResults({
             type="button"
             onClick={onRematch}
             disabled={busy}
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[var(--accent)] py-3 text-sm font-semibold text-white transition hover:bg-[var(--accent-hover)] disabled:opacity-50"
+            className="sketch-btn flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[var(--accent)] py-3.5 text-sm font-extrabold text-white disabled:opacity-50"
           >
             <RotateCcw className="h-4 w-4" />
             {busy ? 'Creating...' : 'Rematch'}
