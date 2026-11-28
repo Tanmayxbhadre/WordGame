@@ -2,15 +2,36 @@ import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { colors } from '@wordshift/ui-tokens';
 import type { CreateMatchResponse, JoinMatchResponse } from '@wordshift/shared-types';
 import { makeIdempotencyKey, mobileApiFetch } from '../lib/api';
+import { supabase } from '../lib/supabase';
+import { sketchColors, sketchStyles } from '../lib/theme';
+
+async function ensureMobileSession(): Promise<boolean> {
+  const { data } = await supabase.auth.getSession();
+  if (data.session?.user) return true;
+
+  const { data: anon, error: anonErr } = await supabase.auth.signInAnonymously();
+  if (!anonErr && anon.user) return true;
+
+  const res = await mobileApiFetch<{ email: string; password: string }>('/api/auth/guest', {
+    method: 'POST',
+  });
+  if (!res.ok) return false;
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email: res.data.email,
+    password: res.data.password,
+  });
+  return !error;
+}
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -22,6 +43,7 @@ export default function HomeScreen() {
     setError(null);
     setLoading(true);
     try {
+      await ensureMobileSession();
       const res = await mobileApiFetch<CreateMatchResponse>('/api/matches/create', {
         method: 'POST',
         body: JSON.stringify({
@@ -53,6 +75,7 @@ export default function HomeScreen() {
     }
     setLoading(true);
     try {
+      await ensureMobileSession();
       const res = await mobileApiFetch<JoinMatchResponse>('/api/matches/join', {
         method: 'POST',
         body: JSON.stringify({
@@ -75,137 +98,201 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>WordShift</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Playful Tile Preview */}
+      <View style={styles.previewRow}>
+        {['C', 'O', 'L', 'D'].map((ch, idx) => (
+          <View
+            key={idx}
+            style={[
+              sketchStyles.tile,
+              styles.miniTile,
+              idx === 2 ? { backgroundColor: sketchColors.accent } : { backgroundColor: sketchColors.bgSecondary },
+            ]}
+          >
+            <Text style={styles.miniTileText}>{ch}</Text>
+          </View>
+        ))}
+        <Text style={styles.arrow}>→</Text>
+        {['W', 'A', 'R', 'M'].map((ch, idx) => (
+          <View
+            key={idx}
+            style={[sketchStyles.tile, styles.miniTile, { backgroundColor: 'rgba(52,211,153,0.2)' }]}
+          >
+            <Text style={[styles.miniTileText, { color: sketchColors.success }]}>{ch}</Text>
+          </View>
+        ))}
+      </View>
+
+      <Text style={styles.title}>Shift one letter. Beat your friend.</Text>
       <Text style={styles.subtitle}>
-        Change one letter per turn. Reach the target word first.
+        Take 30s turns on a shared word chain. First to reach the target wins!
       </Text>
 
       {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      <Pressable style={styles.primaryBtn} onPress={handleCreate} disabled={loading}>
+      <Pressable
+        style={[sketchStyles.button, styles.primaryBtn]}
+        onPress={handleCreate}
+        disabled={loading}
+      >
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.primaryBtnText}>Create Private Room</Text>
+          <Text style={styles.primaryBtnText}>+ Create Private Room</Text>
         )}
       </Pressable>
 
-      <View style={styles.card}>
+      <View style={[sketchStyles.card, styles.card]}>
         <Text style={styles.label}>Join with Room Code</Text>
         <TextInput
           style={styles.input}
           value={roomCode}
           onChangeText={(t) => setRoomCode(t.toUpperCase())}
           placeholder="ABC123"
-          placeholderTextColor={colors.dark.textMuted}
+          placeholderTextColor={sketchColors.textMuted}
           autoCapitalize="characters"
           maxLength={8}
         />
-        <Pressable style={styles.secondaryBtn} onPress={handleJoin} disabled={loading}>
+        <Pressable
+          style={[sketchStyles.button, styles.secondaryBtn]}
+          onPress={handleJoin}
+          disabled={loading}
+        >
           <Text style={styles.secondaryBtnText}>Join Match</Text>
         </Pressable>
       </View>
 
+      <Pressable
+        style={[sketchStyles.button, styles.secondaryBtn]}
+        onPress={() => router.push('/vs-computer')}
+      >
+        <Text style={styles.secondaryBtnText}>Play vs Computer</Text>
+      </Pressable>
+
       <View style={styles.navRow}>
-        <Pressable style={styles.navBtn} onPress={() => router.push('/profile')}>
+        <Pressable style={[sketchStyles.button, styles.navBtn]} onPress={() => router.push('/profile')}>
           <Text style={styles.navBtnText}>Profile</Text>
         </Pressable>
-        <Pressable style={styles.navBtn} onPress={() => router.push('/settings')}>
+        <Pressable style={[sketchStyles.button, styles.navBtn]} onPress={() => router.push('/settings')}>
           <Text style={styles.navBtnText}>Settings</Text>
         </Pressable>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 20,
-    backgroundColor: colors.dark.bgPrimary,
+    backgroundColor: sketchColors.bgPrimary,
     justifyContent: 'center',
     gap: 16,
   },
+  previewRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+    marginBottom: 4,
+  },
+  miniTile: {
+    width: 34,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  miniTileText: {
+    color: sketchColors.textPrimary,
+    fontWeight: '900',
+    fontSize: 15,
+  },
+  arrow: {
+    color: sketchColors.textMuted,
+    fontWeight: '800',
+    fontSize: 16,
+    marginHorizontal: 4,
+  },
   title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: colors.dark.textPrimary,
+    fontSize: 28,
+    fontWeight: '900',
+    color: sketchColors.textPrimary,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
-    color: colors.dark.textSecondary,
-    marginBottom: 8,
+    color: sketchColors.textSecondary,
+    textAlign: 'center',
+    marginBottom: 4,
   },
   error: {
-    color: colors.dark.danger,
+    color: sketchColors.danger,
     fontSize: 13,
-    backgroundColor: 'rgba(239,68,68,0.12)',
-    padding: 10,
-    borderRadius: 10,
+    fontWeight: '700',
+    backgroundColor: 'rgba(248,113,113,0.14)',
+    borderColor: sketchColors.border,
+    borderWidth: 2,
+    padding: 12,
+    borderRadius: 14,
+    textAlign: 'center',
   },
   primaryBtn: {
-    backgroundColor: colors.dark.accent,
-    paddingVertical: 15,
-    borderRadius: 12,
+    backgroundColor: sketchColors.accent,
+    paddingVertical: 16,
     alignItems: 'center',
   },
   primaryBtnText: {
     color: '#FFFFFF',
-    fontWeight: '600',
+    fontWeight: '800',
     fontSize: 16,
   },
   card: {
-    backgroundColor: colors.dark.bgSecondary,
-    borderColor: colors.dark.borderSubtle,
-    borderWidth: 1,
-    borderRadius: 14,
-    padding: 16,
-    gap: 10,
+    padding: 18,
+    gap: 12,
   },
   label: {
-    color: colors.dark.textSecondary,
+    color: sketchColors.textMuted,
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '800',
     textTransform: 'uppercase',
   },
   input: {
-    backgroundColor: colors.dark.bgPrimary,
-    borderColor: colors.dark.borderSubtle,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    color: colors.dark.textPrimary,
-    fontSize: 18,
-    fontWeight: '700',
+    backgroundColor: sketchColors.bgPrimary,
+    borderColor: sketchColors.border,
+    borderWidth: 2,
+    borderRadius: 14,
+    padding: 14,
+    color: sketchColors.textPrimary,
+    fontSize: 20,
+    fontWeight: '900',
     letterSpacing: 4,
+    textAlign: 'center',
   },
   secondaryBtn: {
-    backgroundColor: colors.dark.bgElevated,
-    paddingVertical: 13,
-    borderRadius: 10,
+    backgroundColor: sketchColors.bgElevated,
+    paddingVertical: 14,
     alignItems: 'center',
   },
   secondaryBtnText: {
-    color: colors.dark.textPrimary,
-    fontWeight: '600',
+    color: sketchColors.textPrimary,
+    fontWeight: '800',
     fontSize: 15,
   },
   navRow: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: 8,
+    marginTop: 4,
   },
   navBtn: {
     flex: 1,
-    borderColor: colors.dark.borderSubtle,
-    borderWidth: 1,
-    paddingVertical: 12,
-    borderRadius: 10,
+    backgroundColor: sketchColors.bgSecondary,
+    paddingVertical: 13,
     alignItems: 'center',
   },
   navBtnText: {
-    color: colors.dark.textSecondary,
-    fontWeight: '600',
+    color: sketchColors.textPrimary,
+    fontWeight: '700',
   },
 });

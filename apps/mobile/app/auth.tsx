@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { colors } from '@wordshift/ui-tokens';
 import { supabase } from '../lib/supabase';
+import { sketchColors, sketchStyles } from '../lib/theme';
 
 export default function AuthScreen() {
   const router = useRouter();
@@ -18,7 +18,10 @@ export default function AuthScreen() {
     setLoading(true);
     try {
       if (mode === 'login') {
-        const { error: err } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        const { error: err } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
         if (err) {
           setError(err.message);
           return;
@@ -43,53 +46,59 @@ export default function AuthScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{mode === 'login' ? 'Sign In' : 'Create Account'}</Text>
+      <View style={[sketchStyles.card, styles.card]}>
+        <Text style={styles.title}>{mode === 'login' ? 'Sign In' : 'Create Account'}</Text>
 
-      {mode === 'signup' && (
+        {mode === 'signup' && (
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            placeholderTextColor={sketchColors.textMuted}
+            value={username}
+            onChangeText={setUsername}
+            autoCapitalize="none"
+          />
+        )}
+
         <TextInput
           style={styles.input}
-          placeholder="Username"
-          placeholderTextColor={colors.dark.textMuted}
-          value={username}
-          onChangeText={setUsername}
+          placeholder="Email"
+          placeholderTextColor={sketchColors.textMuted}
+          value={email}
+          onChangeText={setEmail}
           autoCapitalize="none"
+          keyboardType="email-address"
         />
-      )}
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor={colors.dark.textMuted}
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor={sketchColors.textMuted}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor={colors.dark.textMuted}
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+        {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+        <Pressable
+          style={[sketchStyles.button, styles.btn]}
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.btnText}>{mode === 'login' ? 'Sign In' : 'Sign Up'}</Text>
+          )}
+        </Pressable>
 
-      <Pressable style={styles.btn} onPress={handleSubmit} disabled={loading}>
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.btnText}>{mode === 'login' ? 'Sign In' : 'Sign Up'}</Text>
-        )}
-      </Pressable>
-
-      <Pressable onPress={() => setMode(mode === 'login' ? 'signup' : 'login')}>
-        <Text style={styles.toggle}>
-          {mode === 'login' ? 'Need an account? Sign up' : 'Already have an account? Sign in'}
-        </Text>
-      </Pressable>
+        <Pressable onPress={() => setMode(mode === 'login' ? 'signup' : 'login')}>
+          <Text style={styles.toggle}>
+            {mode === 'login' ? 'Need an account? Sign up' : 'Already have an account? Sign in'}
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -98,27 +107,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: colors.dark.bgPrimary,
+    backgroundColor: sketchColors.bgPrimary,
     justifyContent: 'center',
+  },
+  card: {
+    padding: 20,
     gap: 12,
   },
-  title: { fontSize: 24, fontWeight: '700', color: colors.dark.textPrimary, marginBottom: 8 },
-  input: {
-    backgroundColor: colors.dark.bgSecondary,
-    borderColor: colors.dark.borderSubtle,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 14,
-    color: colors.dark.textPrimary,
+  title: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: sketchColors.textPrimary,
+    marginBottom: 4,
   },
-  error: { color: colors.dark.danger, fontSize: 13 },
+  input: {
+    backgroundColor: sketchColors.bgPrimary,
+    borderColor: sketchColors.border,
+    borderWidth: 2,
+    borderRadius: 14,
+    padding: 14,
+    color: sketchColors.textPrimary,
+    fontWeight: '600',
+  },
+  error: { color: sketchColors.danger, fontSize: 13, fontWeight: '700' },
   btn: {
-    backgroundColor: colors.dark.accent,
-    paddingVertical: 14,
-    borderRadius: 12,
+    backgroundColor: sketchColors.accent,
+    paddingVertical: 15,
     alignItems: 'center',
     marginTop: 4,
   },
-  btnText: { color: '#fff', fontWeight: '600', fontSize: 16 },
-  toggle: { color: colors.dark.textSecondary, textAlign: 'center', marginTop: 12 },
+  btnText: { color: '#fff', fontWeight: '800', fontSize: 16 },
+  toggle: {
+    color: sketchColors.textSecondary,
+    textAlign: 'center',
+    marginTop: 8,
+    fontWeight: '600',
+  },
 });
