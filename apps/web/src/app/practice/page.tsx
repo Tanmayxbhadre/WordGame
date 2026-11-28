@@ -75,22 +75,24 @@ export default function PracticePage() {
   return (
     <div className="mx-auto max-w-lg space-y-6">
       <div className="flex items-center justify-between">
-        <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+        <Link href="/" className="sketch-btn inline-flex items-center gap-1.5 rounded-xl bg-[var(--bg-secondary)] px-3 py-1.5 text-xs font-bold text-[var(--text-primary)]">
           <ArrowLeft className="h-4 w-4" /> Home
         </Link>
         <button
           type="button"
           onClick={loadNewPuzzle}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-subtle)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]"
+          className="sketch-btn inline-flex items-center gap-1.5 rounded-xl bg-[var(--bg-secondary)] px-3 py-1.5 text-xs font-bold text-[var(--text-primary)]"
         >
           <RotateCcw className="h-3.5 w-3.5" /> New Puzzle
         </button>
       </div>
 
-      <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6 text-center">
-        <div className="flex items-center justify-between text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
+      <div className="sketch-card rounded-3xl bg-[var(--bg-secondary)] p-6 text-center">
+        <div className="flex items-center justify-between text-xs font-extrabold uppercase tracking-wider text-[var(--text-muted)]">
           <span>Start: {startWord.toUpperCase()}</span>
-          <span>Target: {targetWord.toUpperCase()}</span>
+          <span className="rounded-lg border-2 border-[var(--border-subtle)] bg-[var(--success)]/20 px-2.5 py-0.5 font-mono text-[var(--success)]">
+            Goal: {targetWord.toUpperCase()}
+          </span>
         </div>
 
         <div className="mt-6 flex justify-center gap-2.5">
@@ -102,12 +104,12 @@ export default function PracticePage() {
                 key={idx}
                 type="button"
                 onClick={() => setSelectedPos(idx)}
-                className={`flex h-14 w-14 items-center justify-center rounded-xl border-2 font-mono text-2xl font-bold uppercase transition sm:h-16 sm:w-16 ${
+                className={`sketch-tile flex h-14 w-14 items-center justify-center rounded-2xl font-mono text-2xl font-black uppercase sm:h-16 sm:w-16 ${
                   isChanged
-                    ? 'border-[var(--success)] bg-[var(--success)]/15 text-[var(--success)]'
+                    ? 'bg-[var(--success)] text-white'
                     : isSelected
-                      ? 'border-[var(--accent)] bg-[var(--bg-elevated)] text-[var(--text-primary)]'
-                      : 'border-[var(--tile-border)] bg-[var(--tile-bg)] text-[var(--text-primary)]'
+                      ? '-translate-y-1 bg-[var(--accent)] text-white'
+                      : 'bg-[var(--tile-bg)] text-[var(--text-primary)]'
                 }`}
               >
                 {ch}
@@ -118,22 +120,22 @@ export default function PracticePage() {
 
         {feedback && (
           <div
-            className={`mt-4 rounded-xl px-3 py-2 text-sm font-medium ${
+            className={`mt-4 rounded-xl border-2 border-[var(--border-subtle)] px-3 py-2 text-sm font-bold ${
               feedback.type === 'error'
-                ? 'bg-[var(--danger)]/10 text-[var(--danger)]'
-                : 'bg-[var(--success)]/10 text-[var(--success)]'
+                ? 'bg-[var(--danger)]/15 text-[var(--danger)]'
+                : 'bg-[var(--success)]/15 text-[var(--success)]'
             }`}
           >
             {feedback.text}
           </div>
         )}
 
-        <div className="mt-5 flex gap-2">
+        <div className="mt-5 flex gap-2.5">
           <button
             type="button"
             onClick={() => setDraftWord(currentWord)}
             disabled={!hasSingleChange || won}
-            className="flex-1 rounded-xl border border-[var(--border-subtle)] py-2.5 text-sm font-medium text-[var(--text-secondary)] disabled:opacity-40"
+            className="sketch-btn flex-1 rounded-xl bg-[var(--bg-elevated)] py-2.5 text-sm font-bold text-[var(--text-primary)] disabled:opacity-40"
           >
             Reset
           </button>
@@ -141,26 +143,24 @@ export default function PracticePage() {
             type="button"
             onClick={handleSubmit}
             disabled={!hasSingleChange || won}
-            className="flex-[2] rounded-xl bg-[var(--accent)] py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-hover)] disabled:opacity-40"
+            className="sketch-btn flex-[2] rounded-xl bg-[var(--accent)] py-2.5 text-sm font-extrabold text-white disabled:opacity-40"
           >
             Submit Move
           </button>
         </div>
       </div>
 
-      {/* Chain */}
       <div className="flex flex-wrap justify-center gap-2">
         {chain.map((w, i) => (
           <span
             key={`${w}-${i}`}
-            className="rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-1 font-mono text-xs font-semibold uppercase text-[var(--text-primary)]"
+            className="rounded-xl border-2 border-[var(--border-subtle)] bg-[var(--bg-secondary)] px-3 py-1 font-mono text-xs font-black uppercase text-[var(--text-primary)]"
           >
             {w}
           </span>
         ))}
       </div>
 
-      {/* On-screen Keyboard */}
       <div className="space-y-1.5">
         {rows.map((row, rIdx) => (
           <div key={rIdx} className="flex justify-center gap-1">
@@ -169,7 +169,7 @@ export default function PracticePage() {
                 key={key}
                 type="button"
                 onClick={() => handleKeyPress(key)}
-                className="flex h-11 min-w-[30px] flex-1 max-w-[42px] items-center justify-center rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-secondary)] text-sm font-semibold text-[var(--text-primary)] active:scale-95"
+                className="sketch-tile flex h-11 min-w-[30px] flex-1 max-w-[42px] items-center justify-center rounded-xl bg-[var(--bg-secondary)] text-sm font-extrabold text-[var(--text-primary)]"
               >
                 {key}
               </button>

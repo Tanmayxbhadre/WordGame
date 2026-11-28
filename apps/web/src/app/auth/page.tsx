@@ -82,8 +82,8 @@ export default function AuthPage() {
 
   return (
     <div className="mx-auto max-w-md pt-6">
-      <div className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)] p-6 sm:p-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-primary)]">
+      <div className="sketch-card rounded-3xl bg-[var(--bg-secondary)] p-6 sm:p-8">
+        <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)]">
           {mode === 'login'
             ? 'Sign in to WordShift'
             : mode === 'signup'
@@ -166,7 +166,7 @@ export default function AuthPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-[var(--accent)] py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--accent-hover)] disabled:opacity-50"
+            className="sketch-btn w-full rounded-2xl bg-[var(--accent)] py-3 text-sm font-extrabold text-white disabled:opacity-50"
           >
             {loading
               ? 'Please wait...'
