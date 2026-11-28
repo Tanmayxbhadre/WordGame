@@ -84,3 +84,11 @@ CREATE POLICY daily_challenges_select_authenticated
   USING (true);
 
 -- idempotency_keys, rate_limits, match_audit_logs: intentionally NO client policies (server-only)
+
+-- Ensure service_role and authenticated have schema/table grants (needed when running via SQL Editor)
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO service_role;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO service_role;
+GRANT SELECT ON public.profiles, public.words, public.matches, public.match_players, public.match_moves, public.match_invites, public.rankings, public.daily_challenges TO authenticated;
+GRANT UPDATE (username, avatar_url) ON public.profiles TO authenticated;
